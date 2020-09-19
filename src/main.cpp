@@ -9,14 +9,14 @@ Water *water;
 bool saveTrigger = false;
 int frameNumber = 0;
 
-float verticalAngle = -1.85176;
-float horizontalAngle = 3.02591;
+float verticalAngle = -2.39184;
+float horizontalAngle = 1.59911;
 float initialFoV = 45.0f;
 float speed = 5.0f;
 float mouseSpeed = 0.005f;
 float nearPlane = 0.01f, farPlane = 2000.f;
 
-vec3 eyePoint = vec3(-0.538072, 4.445531, 14.041491);
+vec3 eyePoint = vec3(-0.054275, 1.642230, 1.694575);
 vec3 eyeDirection =
     vec3(sin(verticalAngle) * cos(horizontalAngle), cos(verticalAngle),
          sin(verticalAngle) * sin(horizontalAngle));
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   initOther();
 
   skybox = new Skybox();
-  water = new Water();
+  water = new Water("./mesh/quad.obj");
 
   initTexture();
   initMatrix();
@@ -60,14 +60,15 @@ int main(int argc, char **argv) {
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
-    glClearColor(97 / 256.f, 175 / 256.f, 239 / 256.f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.f, 0.f, 0.4f, 1.0f);
 
     // view control
     computeMatricesFromInputs();
 
     /* render to refraction texture */
     glBindFramebuffer(GL_FRAMEBUFFER, water->fboRefract);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // for user-defined framebuffer,
     // must clear the depth buffer before rendering to enable depth test
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -82,10 +83,10 @@ int main(int argc, char **argv) {
     skybox->draw(model, view, projection, eyePoint);
 
     /* render to reflection texture */
-    glBindFramebuffer(GL_FRAMEBUFFER, water->fboReflect);
     // for user-defined framebuffer,
     // must clear the depth buffer before rendering to enable depth test
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, water->fboReflect);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // clipping
     glDisable(GL_CLIP_DISTANCE0);
@@ -102,6 +103,7 @@ int main(int argc, char **argv) {
 
     /* render to main screen */
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDisable(GL_CLIP_DISTANCE0);
     glDisable(GL_CLIP_DISTANCE1);
@@ -110,16 +112,13 @@ int main(int argc, char **argv) {
     // draw scene
     skybox->draw(model, view, projection, eyePoint);
 
-    for (size_t i = 0; i < 15; i++) {
-      for (size_t j = 0; j < 15; j++) {
-        mat4 tempM = translate(mat4(1.0), vec3(2.0f * i, 0, 2.0f * j));
+    for (size_t i = 0; i < 10; i++) {
+      for (size_t j = 0; j < 10; j++) {
+        mat4 tempM = translate(mat4(1.0), vec3(2.0f * i, 0, -2.0f * j));
         water->draw(tempM, view, projection, eyePoint, lightColor,
                     lightPosition);
       }
     }
-    // box->draw(boxM, view, projection, eyePoint, lightColor, lightPosition,
-    // 15,
-    //           16);
 
     // refresh frame
     glfwSwapBuffers(window);

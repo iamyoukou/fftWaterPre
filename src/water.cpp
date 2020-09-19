@@ -1,13 +1,14 @@
 #include "common.h"
 #include "water.h"
 
-const float Water::WATER_SIZE = 1.f;
-const float Water::WATER_Y = 2.2f;
-float Water::dudvMove = 0.f;
+const float Water::WATER_Y = 0.f;
 
-Water::Water() {
+Water::Water(const string fileName) {
+  // import mesh by assimp
+  scene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace);
+
   initShader();
-  initBuffer();
+  initBuffers();
   initTexture();
   initUniform();
   initReflect();
@@ -21,7 +22,7 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
   glUseProgram(shader);
 
   // glUniform1f(uniDudvMove, dudvMove);
-  glUniform3fv(uniCamCoord, 1, value_ptr(eyePoint));
+  glUniform3fv(uniEyePoint, 1, value_ptr(eyePoint));
 
   glUniform3fv(uniLightColor, 1, value_ptr(lightColor));
   glUniform3fv(uniLightPos, 1, value_ptr(lightPosition));
@@ -30,32 +31,87 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
   glUniformMatrix4fv(uniV, 1, GL_FALSE, value_ptr(V));
   glUniformMatrix4fv(uniP, 1, GL_FALSE, value_ptr(P));
 
-  glBindVertexArray(vao);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  for (size_t i = 0; i < scene->mNumMeshes; i++) {
+    int numVtxs = scene->mMeshes[i]->mNumVertices;
+
+    glBindVertexArray(vaos[i]);
+    glDrawArrays(GL_PATCHES, 0, numVtxs);
+  }
 }
 
-void Water::initBuffer() {
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
+void Water::initBuffers() {
+  // for each mesh
+  for (size_t i = 0; i < scene->mNumMeshes; i++) {
+    const aiMesh *mesh = scene->mMeshes[i];
+    int numVtxs = mesh->mNumVertices;
 
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vtxs), vtxs, GL_STATIC_DRAW);
-  // position
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(0);
-  // uv
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0,
-                        (GLvoid *)(sizeof(GLfloat) * 6 * 3));
-  glEnableVertexAttribArray(1);
-  // normals
-  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0,
-                        (GLvoid *)(sizeof(GLfloat) * 6 * (3 + 2)));
-  glEnableVertexAttribArray(2);
+    // numVertices * numComponents
+    GLfloat *aVtxCoords = new GLfloat[numVtxs * 3];
+    GLfloat *aUvs = new GLfloat[numVtxs * 2];
+    GLfloat *aNormals = new GLfloat[numVtxs * 3];
+
+    for (size_t j = 0; j < numVtxs; j++) {
+      aiVector3D &vtx = mesh->mVertices[j];
+      aVtxCoords[j * 3 + 0] = vtx.x;
+      aVtxCoords[j * 3 + 1] = vtx.y;
+      aVtxCoords[j * 3 + 2] = vtx.z;
+
+      aiVector3D &nml = mesh->mNormals[j];
+      aNormals[j * 3 + 0] = nml.x;
+      aNormals[j * 3 + 1] = nml.y;
+      aNormals[j * 3 + 2] = nml.z;
+
+      aiVector3D &uv = mesh->mTextureCoords[0][j];
+      aUvs[j * 2 + 0] = uv.x;
+      aUvs[j * 2 + 1] = uv.y;
+    }
+
+    // vao
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    vaos.push_back(vao);
+
+    // vbo for vertex
+    GLuint vboVtx;
+    glGenBuffers(1, &vboVtx);
+    glBindBuffer(GL_ARRAY_BUFFER, vboVtx);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * numVtxs * 3, aVtxCoords,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+    vboVtxs.push_back(vboVtx);
+
+    // vbo for uv
+    GLuint vboUv;
+    glGenBuffers(1, &vboUv);
+    glBindBuffer(GL_ARRAY_BUFFER, vboUv);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * numVtxs * 2, aUvs,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+    vboUvs.push_back(vboUv);
+
+    // vbo for normal
+    GLuint vboNml;
+    glGenBuffers(1, &vboNml);
+    glBindBuffer(GL_ARRAY_BUFFER, vboNml);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * numVtxs * 3, aNormals,
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+    vboNmls.push_back(vboNml);
+
+    // delete client data
+    delete[] aVtxCoords;
+    delete[] aUvs;
+    delete[] aNormals;
+  } // end for each mesh
 }
 
 void Water::initShader() {
-  shader = buildShader("./shader/vsWater.glsl", "./shader/fsWater.glsl");
+  shader = buildShader("./shader/vsWater.glsl", "./shader/fsWater.glsl",
+                       "./shader/tcsQuad.glsl", "./shader/tesQuad.glsl");
 }
 
 void Water::initTexture() {
@@ -98,7 +154,7 @@ void Water::initUniform() {
 
   // other
   // uniDudvMove = myGetUniformLocation(shader, "dudvMove");
-  uniCamCoord = myGetUniformLocation(shader, "camCoord");
+  uniEyePoint = myGetUniformLocation(shader, "eyePoint");
 }
 
 void Water::initReflect() {
