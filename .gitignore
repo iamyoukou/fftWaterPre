@@ -1,0 +1,9 @@
+
+result/
+main
+*.o
+*.mp4
+palette.png
+normal2dudv
+test.png
+normal.png
