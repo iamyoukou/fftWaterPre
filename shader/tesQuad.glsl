@@ -43,7 +43,7 @@ void main() {
 
   float scale = 0.2;
   float offset = texture(texHeight, mod(uv + dudvMove, 1.0)).r * 2.0 - 1.0;
-  worldPos.y += offset * scale;
+  worldPos.y = offset * scale;
 
   gl_Position = P * V * vec4(worldPos, 1.0);
 
