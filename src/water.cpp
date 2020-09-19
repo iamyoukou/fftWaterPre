@@ -138,6 +138,7 @@ void Water::initUniform() {
   uniTexRefract = myGetUniformLocation(shader, "texRefract");
   uniTexHeight = myGetUniformLocation(shader, "texHeight");
   uniTexNormal = myGetUniformLocation(shader, "texNormal");
+  uniTexSkybox = myGetUniformLocation(shader, "texSkybox");
 
   glUniform1i(uniTexHeight, 11);
   glUniform1i(uniTexNormal, 12);

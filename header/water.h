@@ -20,7 +20,7 @@ public:
   GLuint tboHeight, tboNormal;
   GLint uniM, uniV, uniP;
   GLint uniLightColor, uniLightPos;
-  GLint uniTexReflect, uniTexRefract, uniTexHeight, uniTexNormal;
+  GLint uniTexReflect, uniTexRefract, uniTexHeight, uniTexNormal, uniTexSkybox;
   GLint uniEyePoint;
   GLint uniDudvMove;
   GLuint tboRefract, tboReflect;

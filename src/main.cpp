@@ -112,8 +112,8 @@ int main(int argc, char **argv) {
     // draw scene
     skybox->draw(model, view, projection, eyePoint);
 
-    for (size_t i = 0; i < 1; i++) {
-      for (size_t j = 0; j < 1; j++) {
+    for (size_t i = 0; i < 2; i++) {
+      for (size_t j = 0; j < 2; j++) {
         mat4 tempM = translate(mat4(1.0), vec3(2.0f * i, 0, -2.0f * j));
         water->draw(tempM, view, projection, eyePoint, lightColor,
                     lightPosition);
