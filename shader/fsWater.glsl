@@ -7,10 +7,11 @@ in vec3 worldN;
 
 uniform sampler2D texReflect;
 uniform sampler2D texRefract;
-uniform sampler2D texNormal;
+uniform sampler2D texNormal, texHeight;
 uniform vec3 lightColor;
 uniform vec3 lightPosition;
 uniform vec3 eyePoint;
+uniform vec2 dudvMove;
 
 out vec4 fragColor;
 
@@ -33,7 +34,7 @@ void main() {
   vec4 colorReflection = texture(texReflect, texCoordReflect);
   vec4 colorRefraction = texture(texRefract, texCoordRefract);
 
-  vec3 N = vec3(0, 1, 0);
+  vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
   vec3 L = normalize(lightPosition - worldPos);
   vec3 V = normalize(eyePoint - worldPos);
   vec3 H = normalize(L + V);
@@ -49,5 +50,5 @@ void main() {
   fragColor = mix(fragColor,
                   vec4(0.0, 0.0, 0.1, 1.0) + vec4(specularHighlight, 0), 0.1);
 
-  fragColor = vec4(1.0);
+  // fragColor = texture(texHeight, uv);
 }

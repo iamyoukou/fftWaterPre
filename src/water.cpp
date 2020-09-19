@@ -2,6 +2,7 @@
 #include "water.h"
 
 const float Water::WATER_Y = 0.f;
+vec2 Water::dudvMove = vec2(0.f, 0.f);
 
 Water::Water(const string fileName) {
   // import mesh by assimp
@@ -21,7 +22,6 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
                  vec3 lightPosition) {
   glUseProgram(shader);
 
-  // glUniform1f(uniDudvMove, dudvMove);
   glUniform3fv(uniEyePoint, 1, value_ptr(eyePoint));
 
   glUniform3fv(uniLightColor, 1, value_ptr(lightColor));
@@ -30,6 +30,8 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
   glUniformMatrix4fv(uniM, 1, GL_FALSE, value_ptr(M));
   glUniformMatrix4fv(uniV, 1, GL_FALSE, value_ptr(V));
   glUniformMatrix4fv(uniP, 1, GL_FALSE, value_ptr(P));
+
+  glUniform2fv(uniDudvMove, 1, value_ptr(dudvMove));
 
   for (size_t i = 0; i < scene->mNumMeshes; i++) {
     int numVtxs = scene->mMeshes[i]->mNumVertices;
@@ -115,11 +117,8 @@ void Water::initShader() {
 }
 
 void Water::initTexture() {
-  // water dudv map
-  // setTexture(tboDudv, 11, "./image/dudv2.png", FIF_PNG);
-
-  // water normal map
-  // setTexture(tboNormal, 12, "./image/normalMap2.png", FIF_PNG);
+  setTexture(tboHeight, 11, "./image/height512.png", FIF_PNG);
+  setTexture(tboNormal, 12, "./image/normal512.png", FIF_PNG);
 }
 
 void Water::initUniform() {
@@ -137,10 +136,10 @@ void Water::initUniform() {
   // texture
   uniTexReflect = myGetUniformLocation(shader, "texReflect");
   uniTexRefract = myGetUniformLocation(shader, "texRefract");
-  // uniTexDudv = myGetUniformLocation(shader, "texDudv");
+  uniTexHeight = myGetUniformLocation(shader, "texHeight");
   uniTexNormal = myGetUniformLocation(shader, "texNormal");
 
-  // glUniform1i(uniTexDudv, 11);
+  glUniform1i(uniTexHeight, 11);
   glUniform1i(uniTexNormal, 12);
   glUniform1i(uniTexReflect, 3);
   glUniform1i(uniTexRefract, 2);
@@ -153,7 +152,7 @@ void Water::initUniform() {
   // glUniform3fv(uniLightPos, 1, value_ptr(lightPosition));
 
   // other
-  // uniDudvMove = myGetUniformLocation(shader, "dudvMove");
+  uniDudvMove = myGetUniformLocation(shader, "dudvMove");
   uniEyePoint = myGetUniformLocation(shader, "eyePoint");
 }
 

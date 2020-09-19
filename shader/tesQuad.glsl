@@ -3,8 +3,8 @@
 layout(quads, equal_spacing, ccw) in;
 
 uniform mat4 M, V, P;
-
 uniform sampler2D texHeight;
+uniform vec2 dudvMove;
 
 in vec3 esInWorldPos[];
 in vec2 esInUv[];
@@ -41,9 +41,9 @@ void main() {
   uv = interpolate(esInUv[0], esInUv[1], esInUv[2], esInUv[3]);
   worldN = interpolate(esInN[0], esInN[1], esInN[2], esInN[3]);
 
-  // float scale = 12;
-  // float offset = texture(texHeight, uv).r * 2.0 - 1.0;
-  // worldPos.y += offset * scale;
+  float scale = 0.2;
+  float offset = texture(texHeight, mod(uv + dudvMove, 1.0)).r * 2.0 - 1.0;
+  worldPos.y += offset * scale;
 
   gl_Position = P * V * vec4(worldPos, 1.0);
 

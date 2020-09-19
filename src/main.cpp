@@ -120,6 +120,8 @@ int main(int argc, char **argv) {
       }
     }
 
+    Water::dudvMove += vec2(0.005, 0.005);
+
     // refresh frame
     glfwSwapBuffers(window);
 

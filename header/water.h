@@ -6,6 +6,7 @@
 class Water {
 public:
   static const float WATER_Y;
+  static vec2 dudvMove;
 
   // mesh data
   Assimp::Importer importer;
@@ -21,6 +22,7 @@ public:
   GLint uniLightColor, uniLightPos;
   GLint uniTexReflect, uniTexRefract, uniTexHeight, uniTexNormal;
   GLint uniEyePoint;
+  GLint uniDudvMove;
   GLuint tboRefract, tboReflect;
   GLuint fboRefract, fboReflect;
   GLuint rboDepthRefract, rboDepthReflect;
