@@ -15,10 +15,14 @@ LIBS=-L/usr/local/Cellar/glew/2.1.0_1/lib -lglfw \
 
 SRC_DIR=/Users/YJ-work/cpp/myGL_glfw/fftWaterPre/src
 
-all: main
+all: main fresnel
 
 main: main.o common.o skybox.o water.o
 	$(CXX) $(LIBS) $^ -o $@
+
+fresnel: fresnel.o common.o
+	$(CXX) $(LIBS) $^ -o $@
+
 
 main.o: $(SRC_DIR)/main.cpp
 	$(CXX) -c $(INCS) $^ -o $@
@@ -30,6 +34,9 @@ skybox.o: $(SRC_DIR)/skybox.cpp
 	$(CXX) -c $(INCS) $^ -o $@
 
 water.o: $(SRC_DIR)/water.cpp
+	$(CXX) -c $(INCS) $^ -o $@
+
+fresnel.o: $(SRC_DIR)/fresnel.cpp
 	$(CXX) -c $(INCS) $^ -o $@
 
 
