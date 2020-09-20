@@ -117,8 +117,8 @@ void Water::initShader() {
 }
 
 void Water::initTexture() {
-  setTexture(tboHeight, 11, "./image/height512.png", FIF_PNG);
-  setTexture(tboNormal, 12, "./image/normal512.png", FIF_PNG);
+  setTexture(tboHeight, 11, "./image/height.png", FIF_PNG);
+  setTexture(tboNormal, 12, "./image/normal.png", FIF_PNG);
 }
 
 void Water::initUniform() {

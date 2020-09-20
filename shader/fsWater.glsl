@@ -47,7 +47,7 @@ void main() {
   float sinthetat = sin(thetai) / nSnell;
   float thetat = asin(sinthetat);
 
-  if (thetai == 0.0) {
+  if (abs(thetai) < 0.001) {
     fresnel = (nSnell - 1) / (nSnell + 1);
     fresnel = fresnel * fresnel;
   } else {
@@ -56,8 +56,31 @@ void main() {
     fresnel = 0.5 * (fs * fs + ts * ts);
   }
 
+  vec4 c = vec4(1, 1, 1, 1); // texture(water, tex_coord);
+
+  vec4 emissive_color = vec4(1.0, 1.0, 1.0, 1.0);
+  vec4 ambient_color = vec4(0.0, 0.65, 0.75, 1.0);
+  vec4 diffuse_color = vec4(0.5, 0.65, 0.75, 1.0);
+  vec4 specular_color = vec4(1.0, 0.25, 0.0, 1.0);
+
+  float emissive_contribution = 0.00;
+  float ambient_contribution = 0.30;
+  float diffuse_contribution = 0.30;
+  float specular_contribution = 1.80;
+
+  float d = dot(N, L);
+  bool facing = d > 0.0;
+
+  vec4 base = emissive_color * emissive_contribution +
+              ambient_color * ambient_contribution * c +
+              diffuse_color * diffuse_contribution * c * max(d, 0) +
+              (facing ? specular_color * specular_contribution * c *
+                            max(pow(dot(N, H), 120.0), 0.0)
+                      : vec4(0.0, 0.0, 0.0, 0.0));
+
   vec4 sky = texture(texSkybox, R);
 
-  fragColor = mix(sky, refl, 0.25);
+  fragColor = mix(sky, refl, 0.5);
   fragColor = mix(refr, fragColor, fresnel);
+  fragColor = mix(fragColor, base, 0.5);
 }
