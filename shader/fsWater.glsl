@@ -7,16 +7,14 @@ in vec3 worldN;
 
 uniform sampler2D texReflect;
 uniform sampler2D texRefract;
-uniform sampler2D texNormal, texHeight;
+uniform sampler2D texNormal, texHeight, texFresnel;
 uniform samplerCube texSkybox;
 uniform vec3 lightColor;
-uniform vec3 lightPosition;
+uniform vec3 lightPos;
 uniform vec3 eyePoint;
 uniform vec2 dudvMove;
 
 out vec4 fragColor;
-
-const float shineDamper = 30.0;
 
 void main() {
   vec2 ndc = vec2(clipSpace.x / clipSpace.w, clipSpace.y / clipSpace.w);
@@ -35,52 +33,24 @@ void main() {
   vec4 refr = vec4(0.168, 0.267, 0.255, 0);
 
   vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
-  vec3 L = normalize(lightPosition - worldPos);
+  vec3 L = normalize(lightPos - worldPos);
   vec3 V = normalize(eyePoint - worldPos);
   vec3 H = normalize(L + V);
   vec3 R = reflect(-L, N);
 
-  float nSnell = 1.34;
-  float fresnel;
-  float costhetai = max(dot(N, V), 0.0);
-  float thetai = acos(costhetai);
-  float sinthetat = sin(thetai) / nSnell;
-  float thetat = asin(sinthetat);
+  vec2 fresUv = vec2(max(dot(N, R), 0), 0.0);
+  float fresnel = texture(texFresnel, fresUv).r;
 
-  if (abs(thetai) < 0.001) {
-    fresnel = (nSnell - 1) / (nSnell + 1);
-    fresnel = fresnel * fresnel;
-  } else {
-    float fs = sin(thetat - thetai) / sin(thetat + thetai);
-    float ts = tan(thetat - thetai) / tan(thetat + thetai);
-    fresnel = 0.5 * (fs * fs + ts * ts);
-  }
+  vec4 sunColor = vec4(1.0, 1.0, 1.0, 1.0);
+  float sunFactor = 20.0;
 
-  vec4 c = vec4(1, 1, 1, 1); // texture(water, tex_coord);
-
-  vec4 emissive_color = vec4(1.0, 1.0, 1.0, 1.0);
-  vec4 ambient_color = vec4(0.0, 0.65, 0.75, 1.0);
-  vec4 diffuse_color = vec4(0.5, 0.65, 0.75, 1.0);
-  vec4 specular_color = vec4(1.0, 0.25, 0.0, 1.0);
-
-  float emissive_contribution = 0.00;
-  float ambient_contribution = 0.30;
-  float diffuse_contribution = 0.30;
-  float specular_contribution = 1.80;
-
-  float d = dot(N, L);
-  bool facing = d > 0.0;
-
-  vec4 base = emissive_color * emissive_contribution +
-              ambient_color * ambient_contribution * c +
-              diffuse_color * diffuse_contribution * c * max(d, 0) +
-              (facing ? specular_color * specular_contribution * c *
-                            max(pow(dot(N, H), 120.0), 0.0)
-                      : vec4(0.0, 0.0, 0.0, 0.0));
-
+  float dist = length(lightPos - worldPos);
+  dist = 1.0 / (dist * dist);
+  vec4 sun = sunColor * sunFactor * max(pow(dot(N, H), 10.0), 0.0) * dist;
   vec4 sky = texture(texSkybox, R);
 
   fragColor = mix(sky, refl, 0.5);
   fragColor = mix(refr, fragColor, fresnel);
-  fragColor = mix(fragColor, base, 0.5);
+  fragColor += sun;
+  // fragColor = texture(texFresnel, fresUv);
 }

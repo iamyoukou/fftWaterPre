@@ -30,7 +30,7 @@ float horizontalAngleReflect;
 vec3 eyePointReflect;
 mat4 reflectV;
 
-vec3 lightPosition = vec3(-5.f, 10.f, 5.f);
+vec3 lightPosition = vec3(5.f, 10.f, 5.f);
 vec3 lightColor = vec3(1.f, 1.f, 1.f);
 float lightPower = 12.f;
 
@@ -66,12 +66,10 @@ int main(int argc, char **argv) {
     computeMatricesFromInputs();
 
     /* render to refraction texture */
-    glBindFramebuffer(GL_FRAMEBUFFER, water->fboRefract);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // for user-defined framebuffer,
     // must clear the depth buffer before rendering to enable depth test
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, water->fboRefract);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // clipping
     glEnable(GL_CLIP_DISTANCE0);

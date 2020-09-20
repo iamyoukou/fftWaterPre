@@ -5,7 +5,7 @@
 
 int main(int argc, char const *argv[]) {
   int w, h;
-  w = 512;
+  w = 1024;
   h = 1;
 
   FIBITMAP *bitmap = FreeImage_Allocate(w, h, 24);
@@ -49,7 +49,7 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  if (FreeImage_Save(FIF_PNG, bitmap, "fresnel.png", 0))
+  if (FreeImage_Save(FIF_PNG, bitmap, "./image/fresnel.png", 0))
     cout << "Fresnel map successfully saved!" << endl;
 
   return 0;
