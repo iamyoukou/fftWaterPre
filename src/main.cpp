@@ -9,14 +9,14 @@ Water *water;
 bool saveTrigger = false;
 int frameNumber = 0;
 
-float verticalAngle = -2.39184;
-float horizontalAngle = 1.59911;
+float verticalAngle = -1.86524;
+float horizontalAngle = 1.85188;
 float initialFoV = 45.0f;
 float speed = 5.0f;
 float mouseSpeed = 0.005f;
 float nearPlane = 0.01f, farPlane = 2000.f;
 
-vec3 eyePoint = vec3(-0.054275, 1.642230, 1.694575);
+vec3 eyePoint = vec3(5.526803, 0.380263, -0.881132);
 vec3 eyeDirection =
     vec3(sin(verticalAngle) * cos(horizontalAngle), cos(verticalAngle),
          sin(verticalAngle) * sin(horizontalAngle));
@@ -110,8 +110,8 @@ int main(int argc, char **argv) {
     // draw scene
     skybox->draw(model, view, projection, eyePoint);
 
-    for (size_t i = 0; i < 1; i++) {
-      for (size_t j = 0; j < 1; j++) {
+    for (size_t i = 0; i < 10; i++) {
+      for (size_t j = 0; j < 10; j++) {
         mat4 tempM = translate(mat4(1.0), vec3(2.0f * i, 0, -2.0f * j));
         water->draw(tempM, view, projection, eyePoint, lightColor,
                     lightPosition);
