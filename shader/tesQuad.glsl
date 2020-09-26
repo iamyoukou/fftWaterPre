@@ -5,6 +5,7 @@ layout(quads, equal_spacing, ccw) in;
 uniform mat4 M, V, P;
 uniform sampler2D texHeight;
 uniform vec2 dudvMove;
+uniform vec3 eyePoint;
 
 in vec3 esInWorldPos[];
 in vec2 esInUv[];
@@ -41,7 +42,11 @@ void main() {
   uv = interpolate(esInUv[0], esInUv[1], esInUv[2], esInUv[3]);
   worldN = interpolate(esInN[0], esInN[1], esInN[2], esInN[3]);
 
-  float scale = 0.1;
+  // a parameter to reduce artifact at the distant place
+  float alpha = max(length(eyePoint - worldPos), 0.01);
+  alpha = exp(-0.05 * alpha);
+
+  float scale = 0.3 * alpha;
   float offset = texture(texHeight, mod(uv + dudvMove, 1.0)).r * 2.0 - 1.0;
   worldPos.y = offset * scale;
 
