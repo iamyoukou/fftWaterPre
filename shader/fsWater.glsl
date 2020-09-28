@@ -8,6 +8,7 @@ in vec3 worldN;
 uniform sampler2D texReflect;
 uniform sampler2D texRefract;
 uniform sampler2D texNormal, texHeight, texFresnel;
+uniform sampler2D texDispX, texDispZ;
 uniform samplerCube texSkybox;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
@@ -32,7 +33,8 @@ void main() {
   // vec4 refr = texture(texRefract, texCoordRefract);
   vec4 refr = vec4(0.168, 0.267, 0.255, 0);
 
-  vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
+  // vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
+  vec3 N = texture(texNormal, mod(uv, 1.0)).rgb * 2.0 - 1.0;
   vec3 L = normalize(lightPos - worldPos);
   vec3 V = normalize(eyePoint - worldPos);
   vec3 H = normalize(L + V);

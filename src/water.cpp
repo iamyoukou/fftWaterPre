@@ -119,7 +119,9 @@ void Water::initShader() {
 void Water::initTexture() {
   setTexture(tboHeight, 11, "./image/height.png", FIF_PNG);
   setTexture(tboNormal, 12, "./image/normal.png", FIF_PNG);
-  setTexture(tboFresnel, 13, "./image/fresnel.png", FIF_PNG);
+  setTexture(tboDispX, 13, "./image/xDisp.png", FIF_PNG);
+  setTexture(tboDispZ, 14, "./image/zDisp.png", FIF_PNG);
+  setTexture(tboFresnel, 15, "./image/fresnel.png", FIF_PNG);
 }
 
 void Water::initUniform() {
@@ -139,12 +141,16 @@ void Water::initUniform() {
   uniTexRefract = myGetUniformLocation(shader, "texRefract");
   uniTexHeight = myGetUniformLocation(shader, "texHeight");
   uniTexNormal = myGetUniformLocation(shader, "texNormal");
+  uniTexDispX = myGetUniformLocation(shader, "texDispX");
+  uniTexDispZ = myGetUniformLocation(shader, "texDispZ");
   uniTexSkybox = myGetUniformLocation(shader, "texSkybox");
   uniTexFresnel = myGetUniformLocation(shader, "texFresnel");
 
   glUniform1i(uniTexHeight, 11);
   glUniform1i(uniTexNormal, 12);
-  glUniform1i(uniTexFresnel, 13);
+  glUniform1i(uniTexDispX, 13);
+  glUniform1i(uniTexDispZ, 14);
+  glUniform1i(uniTexFresnel, 15);
   glUniform1i(uniTexReflect, 3);
   glUniform1i(uniTexRefract, 2);
 
