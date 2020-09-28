@@ -19,7 +19,7 @@ Water::Water(const string fileName) {
 Water::~Water() {}
 
 void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
-                 vec3 lightPosition) {
+                 vec3 lightPosition, int frameN) {
   glUseProgram(shader);
 
   glUniform3fv(uniEyePoint, 1, value_ptr(eyePoint));
@@ -32,6 +32,34 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
   glUniformMatrix4fv(uniP, 1, GL_FALSE, value_ptr(P));
 
   glUniform2fv(uniDudvMove, 1, value_ptr(dudvMove));
+
+  // update maps
+  // for pre-computed fft water
+  string dir = "./heights/height";
+  // zero padding
+  // e.g. "output0001.bmp"
+  string num = to_string(frameN);
+  num = string(4 - num.length(), '0') + num;
+  string input = dir + num + ".png";
+  setTexture(tboHeight, 11, input.c_str(), FIF_PNG);
+
+  dir = "./normals/normal";
+  num = to_string(frameN);
+  num = string(4 - num.length(), '0') + num;
+  input = dir + num + ".png";
+  setTexture(tboNormal, 12, input.c_str(), FIF_PNG);
+
+  dir = "./heights/xDisp";
+  num = to_string(frameN);
+  num = string(4 - num.length(), '0') + num;
+  input = dir + num + ".png";
+  setTexture(tboDispX, 13, input.c_str(), FIF_PNG);
+
+  dir = "./heights/zDisp";
+  num = to_string(frameN);
+  num = string(4 - num.length(), '0') + num;
+  input = dir + num + ".png";
+  setTexture(tboDispZ, 14, input.c_str(), FIF_PNG);
 
   for (size_t i = 0; i < scene->mNumMeshes; i++) {
     int numVtxs = scene->mMeshes[i]->mNumVertices;

@@ -32,7 +32,7 @@ public:
   Water(const string);
   ~Water();
 
-  void draw(mat4, mat4, mat4, vec3, vec3, vec3);
+  void draw(mat4, mat4, mat4, vec3, vec3, vec3, int);
   void initBuffers();
   void initShader();
   void initTexture();

@@ -7,7 +7,7 @@ Skybox *skybox;
 Water *water;
 
 bool saveTrigger = false;
-int frameNumber = 0;
+int saveFrameNumber = 0, simFrameNumber = 0;
 
 float verticalAngle = -1.86941;
 float horizontalAngle = 4.79914;
@@ -115,12 +115,17 @@ int main(int argc, char **argv) {
     for (size_t i = 0; i < 1; i++) {
       for (size_t j = 0; j < 1; j++) {
         mat4 tempM = translate(mat4(1.0), vec3(2.0f * i, 0, -2.0f * j));
-        water->draw(tempM, view, projection, eyePoint, lightColor,
-                    tempLightPos);
+        water->draw(tempM, view, projection, eyePoint, lightColor, tempLightPos,
+                    simFrameNumber);
       }
     }
 
-    Water::dudvMove += vec2(0.001, 0.0);
+    // Water::dudvMove += vec2(0.001, 0.0);
+
+    simFrameNumber += 1;
+    if (simFrameNumber >= 1000) {
+      simFrameNumber = 0;
+    }
 
     // refresh frame
     glfwSwapBuffers(window);
@@ -129,7 +134,7 @@ int main(int argc, char **argv) {
       string dir = "./result/output";
       // zero padding
       // e.g. "output0001.bmp"
-      string num = to_string(frameNumber);
+      string num = to_string(saveFrameNumber);
       num = string(4 - num.length(), '0') + num;
       string output = dir + num + ".bmp";
 
@@ -141,7 +146,7 @@ int main(int argc, char **argv) {
                    (GLvoid *)FreeImage_GetBits(outputImage));
       FreeImage_Save(FIF_BMP, outputImage, output.c_str(), 0);
       std::cout << output << " saved." << '\n';
-      frameNumber++;
+      saveFrameNumber++;
     }
 
     /* Poll for and process events */
@@ -262,7 +267,7 @@ void keyCallback(GLFWwindow *keyWnd, int key, int scancode, int action,
     }
     case GLFW_KEY_Y: {
       saveTrigger = !saveTrigger;
-      frameNumber = 0;
+      saveFrameNumber = 0;
       break;
     }
     default:
