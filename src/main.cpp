@@ -34,6 +34,8 @@ vec3 lightPosition = vec3(5.f, 10.f, 5.f);
 vec3 lightColor = vec3(1.f, 1.f, 1.f);
 float lightPower = 12.f;
 
+vec3 direction;
+
 void computeMatricesFromInputs();
 void keyCallback(GLFWwindow *, int, int, int, int);
 void initGL();
@@ -110,7 +112,8 @@ int main(int argc, char **argv) {
     // draw scene
     skybox->draw(model, view, projection, eyePoint);
 
-    vec3 tempLightPos = eyePoint + vec3(4.0, 2.0, 0.0);
+    vec3 tempLightPos =
+        eyePoint + vec3(direction.x * 4.0, 2.0, direction.z * 4.0);
 
     for (size_t i = 0; i < 1; i++) {
       for (size_t j = 0; j < 1; j++) {
@@ -189,7 +192,7 @@ void computeMatricesFromInputs() {
   verticalAngleReflect = 3.1415f - verticalAngle;
 
   // Direction : Spherical coordinates to Cartesian coordinates conversion
-  vec3 direction =
+  direction =
       vec3(sin(verticalAngle) * cos(horizontalAngle), cos(verticalAngle),
            sin(verticalAngle) * sin(horizontalAngle));
 

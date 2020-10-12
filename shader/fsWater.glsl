@@ -8,12 +8,10 @@ in vec3 worldN;
 uniform sampler2D texReflect;
 uniform sampler2D texRefract;
 uniform sampler2D texNormal, texHeight, texFresnel;
-uniform sampler2D texDispX, texDispZ;
 uniform samplerCube texSkybox;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 eyePoint;
-uniform vec2 dudvMove;
 
 out vec4 fragColor;
 
@@ -31,9 +29,9 @@ void main() {
 
   vec4 refl = texture(texReflect, texCoordReflect);
   // vec4 refr = texture(texRefract, texCoordRefract);
+  // vec4 refl = vec4(0.69, 0.84, 1, 0);
   vec4 refr = vec4(0.168, 0.267, 0.255, 0);
 
-  // vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
   vec3 N = texture(texNormal, mod(uv, 1.0)).rgb * 2.0 - 1.0;
   vec3 L = normalize(lightPos - worldPos);
   vec3 V = normalize(eyePoint - worldPos);
@@ -48,7 +46,7 @@ void main() {
 
   float dist = length(lightPos - worldPos);
   dist = 1.0 / (dist * dist);
-  vec4 sun = sunColor * sunFactor * max(pow(dot(N, H), 10.0), 0.0) * dist;
+  vec4 sun = sunColor * sunFactor * max(pow(dot(N, H), 130.0), 0.0) * dist;
   vec4 sky = texture(texSkybox, R);
 
   fragColor = mix(sky, refl, 0.5);
@@ -57,7 +55,7 @@ void main() {
 
   // farther the ocean, flatter the appearance
   float dist2 = max(length(eyePoint - worldPos), 0.01);
-  dist2 = 1.0 / dist2;
+  dist2 = exp(-0.1 * dist2);
 
   fragColor = mix(fragColor, refr, 1 - dist2);
 }
