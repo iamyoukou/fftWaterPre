@@ -9,14 +9,14 @@ Water *water;
 bool saveTrigger = false;
 int saveFrameNumber = 0, simFrameNumber = 0;
 
-float verticalAngle = -1.86941;
-float horizontalAngle = 4.79914;
+float verticalAngle = -1.79557;
+float horizontalAngle = 3.16513;
 float initialFoV = 45.0f;
 float speed = 5.0f;
 float mouseSpeed = 0.005f;
 float nearPlane = 0.01f, farPlane = 2000.f;
 
-vec3 eyePoint = vec3(4.762741, 1.241448, -19.011564);
+vec3 eyePoint = vec3(-36.338406, 1.624817, 1.602868);
 vec3 eyeDirection =
     vec3(sin(verticalAngle) * cos(horizontalAngle), cos(verticalAngle),
          sin(verticalAngle) * sin(horizontalAngle));
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
     // draw scene
     skybox->draw(model, view, projection, eyePoint);
 
-    vec3 tempLightPos = eyePoint + vec3(2.0, 5.0, 2.0);
+    vec3 tempLightPos = eyePoint + vec3(4.0, 2.0, 0.0);
 
     for (size_t i = 0; i < 1; i++) {
       for (size_t j = 0; j < 1; j++) {
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     // Water::dudvMove += vec2(0.001, 0.0);
 
     simFrameNumber += 1;
-    if (simFrameNumber >= 1000) {
+    if (simFrameNumber >= 5000) {
       simFrameNumber = 0;
     }
 

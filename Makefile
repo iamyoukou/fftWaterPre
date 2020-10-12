@@ -1,4 +1,4 @@
-CXX=llvm-g++
+CXX=g++-10
 INCS=-c -std=c++17 \
 -I/usr/local/Cellar/glew/2.1.0_1/include \
 -I/usr/local/Cellar/glfw/3.3.2/include \
@@ -25,19 +25,19 @@ fresnel: fresnel.o common.o
 
 
 main.o: $(SRC_DIR)/main.cpp
-	$(CXX) -c $(INCS) $^ -o $@
+	$(CXX) $(INCS) $^ -o $@
 
 common.o: $(SRC_DIR)/common.cpp
-	$(CXX) -c $(INCS) $^ -o $@
+	$(CXX) $(INCS) $^ -o $@
 
 skybox.o: $(SRC_DIR)/skybox.cpp
-	$(CXX) -c $(INCS) $^ -o $@
+	$(CXX) $(INCS) $^ -o $@
 
 water.o: $(SRC_DIR)/water.cpp
-	$(CXX) -c $(INCS) $^ -o $@
+	$(CXX) $(INCS) $^ -o $@
 
 fresnel.o: $(SRC_DIR)/fresnel.cpp
-	$(CXX) -c $(INCS) $^ -o $@
+	$(CXX) $(INCS) $^ -o $@
 
 
 .PHONY: cleanImg cleanObj

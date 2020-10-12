@@ -35,31 +35,13 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
 
   // update maps
   // for pre-computed fft water
-  string dir = "./heights/height";
-  // zero padding
-  // e.g. "output0001.bmp"
-  string num = to_string(frameN);
-  num = string(4 - num.length(), '0') + num;
-  string input = dir + num + ".png";
-  setTexture(tboHeight, 11, input.c_str(), FIF_PNG);
+  string prefix = "./heights/";
+  setTexture(tboHeight, 11, getFileDir(prefix + "height", frameN), FIF_PNG);
+  setTexture(tboDispX, 13, getFileDir(prefix + "xDisp", frameN), FIF_PNG);
+  setTexture(tboDispZ, 14, getFileDir(prefix + "zDisp", frameN), FIF_PNG);
 
-  dir = "./normals/normal";
-  num = to_string(frameN);
-  num = string(4 - num.length(), '0') + num;
-  input = dir + num + ".png";
-  setTexture(tboNormal, 12, input.c_str(), FIF_PNG);
-
-  dir = "./heights/xDisp";
-  num = to_string(frameN);
-  num = string(4 - num.length(), '0') + num;
-  input = dir + num + ".png";
-  setTexture(tboDispX, 13, input.c_str(), FIF_PNG);
-
-  dir = "./heights/zDisp";
-  num = to_string(frameN);
-  num = string(4 - num.length(), '0') + num;
-  input = dir + num + ".png";
-  setTexture(tboDispZ, 14, input.c_str(), FIF_PNG);
+  prefix = "./normals/normal";
+  setTexture(tboNormal, 12, getFileDir(prefix, frameN), FIF_PNG);
 
   for (size_t i = 0; i < scene->mNumMeshes; i++) {
     int numVtxs = scene->mMeshes[i]->mNumVertices;
@@ -274,4 +256,14 @@ void Water::setTexture(GLuint &tbo, int texUnit, const string texDir,
 
   // release
   FreeImage_Unload(texImage);
+}
+
+const char *Water::getFileDir(string prefix, int fNum) {
+  // zero padding
+  // e.g. "output0001.bmp"
+  string num = to_string(fNum);
+  num = string(4 - num.length(), '0') + num;
+  string fileDir = prefix + num + ".png";
+
+  return fileDir.c_str();
 }

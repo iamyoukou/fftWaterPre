@@ -40,6 +40,7 @@ public:
   void initReflect();
   void initRefract();
   void setTexture(GLuint &, int, const string, FREE_IMAGE_FORMAT);
+  const char *getFileDir(string, int);
 };
 
 #endif
