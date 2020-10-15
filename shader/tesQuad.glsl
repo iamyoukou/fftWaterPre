@@ -52,8 +52,8 @@ void main() {
   // worldPos.y = offset * scale;
 
   // perlin noise
-  float perlinZ = texture(texPerlin, uv.xy / 16.0).r * 2.0 - 1.0;
-  float perlinX = texture(texPerlin, uv.yx / 16.0).r * 2.0 - 1.0;
+  // blend this noise with height field can slightly reduce periodic artifacts
+  float perlinY = texture(texPerlin, (uv.xy + dudvMove) / 16.0).r * 2.0 - 1.0;
 
   vec3 tempY = texture(texHeight, uv).rgb;
   float offsetY = tempY.x;
@@ -61,26 +61,22 @@ void main() {
   float signY = (tempY.y < 0.5) ? -1.0 : 1.0;
   float scaleY = 0.5 * (tempY.z * 255.0) * alpha;
   float finalY = offsetY * signY * scaleY;
-  float noiseY = (perlinX + perlinZ) * 0.5 * 10.0 * alpha;
-  worldPos.y += mix(finalY, noiseY, 0.35);
+  float noiseY = perlinY * 20.0 * alpha;
+  worldPos.y += mix(finalY, noiseY, 0.25);
 
   // x-displacement
   vec3 tempX = texture(texDispX, mod(uv, 1.0)).rgb;
   float offsetX = tempX.x;
   float signX = (tempX.y < 0.5) ? -1.0 : 1.0;
   float scaleX = 0.5 * (tempX.z * 255.0) * alpha;
-  float finalX = offsetX * signX * scaleX;
-  float noiseX = perlinX * 5.0 * alpha;
-  worldPos.x += mix(finalX, noiseX, 0.35);
+  worldPos.x += offsetX * signX * scaleX;
 
   // z-displacement
   vec3 tempZ = texture(texDispZ, mod(uv, 1.0)).rgb;
   float offsetZ = tempZ.x;
   float signZ = (tempZ.y < 0.5) ? -1.0 : 1.0;
   float scaleZ = 0.5 * (tempZ.z * 255.0) * alpha;
-  float finalZ = offsetZ * signZ * scaleZ;
-  float noiseZ = perlinZ * 5.0 * alpha;
-  worldPos.z += mix(finalZ, noiseZ, 0.35);
+  worldPos.z += offsetZ * signZ * scaleZ;
 
   gl_Position = P * V * vec4(worldPos, 1.0);
 

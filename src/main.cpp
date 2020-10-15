@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
       }
     }
 
-    // Water::dudvMove += vec2(0.001, 0.0);
+    Water::dudvMove += vec2(0.001, 0.001);
 
     simFrameNumber += 1;
     if (simFrameNumber >= 5000) {
