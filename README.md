@@ -9,15 +9,17 @@ This is a trade-off between performance and memory use.
 
 All results are performed in realtime.
 
-## Demo 1
+## Sample 1
 
 `1` height map, `1` normal map and uv offsets
 
 FFT resolution: `512x512`
 
+This method is suitable when the memory is not enough.
+
 ![result](./output.gif)
 
-## Demo 2
+## Sample 2
 
 The pre-computed FFT water in this demo has a `512x512` resolution.
 It also has a height map, a x-displacement map, a z-displacement map and a normal map per frame.
