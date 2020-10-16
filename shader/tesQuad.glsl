@@ -61,7 +61,7 @@ void main() {
   float signY = (tempY.y < 0.5) ? -1.0 : 1.0;
   float scaleY = 0.5 * (tempY.z * 255.0) * alpha;
   float finalY = offsetY * signY * scaleY;
-  float noiseY = perlinY * 20.0 * alpha;
+  float noiseY = perlinY * 5.0 * alpha;
   worldPos.y += mix(finalY, noiseY, 0.25);
 
   // x-displacement

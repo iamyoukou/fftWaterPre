@@ -7,11 +7,12 @@ in vec3 worldN;
 
 uniform sampler2D texReflect;
 uniform sampler2D texRefract;
-uniform sampler2D texNormal, texHeight, texFresnel;
+uniform sampler2D texNormal, texHeight, texFresnel, texPerlinN;
 uniform samplerCube texSkybox;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 eyePoint;
+uniform vec2 dudvMove;
 
 out vec4 fragColor;
 
@@ -34,15 +35,23 @@ void main() {
   // this can significantly reduce artifacts due to the normal map at far place
   float nFrac = exp(0.075 * dist) - 1.0;
   vec3 warpN = vec3(0, 1.0, 0) * nFrac;
-  vec3 N = texture(texNormal, mod(uv, 1.0)).rgb * 2.0 - 1.0;
-  N = normalize(N + warpN);
+  vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
+
+  float pFrac = min(exp(0.03 * dist) - 1.0, 1.0);
+  vec3 perlinN = texture(texPerlinN, (uv + dudvMove) / 16.0).rgb * 2.0 - 1.0;
+  perlinN *= pFrac;
+
+  N = normalize(N + warpN + perlinN);
+  // end warping normal
 
   vec3 L = normalize(lightPos - worldPos);
   vec3 V = normalize(eyePoint - worldPos);
   vec3 H = normalize(L + V);
   vec3 R = reflect(-L, N);
 
-  vec2 fresUv = vec2(1.0 - max(dot(N, V), 0), 0.0);
+  // two kinds of fresnel effect
+  // vec2 fresUv = vec2(1.0 - max(dot(N, V), 0), 0.0);
+  vec2 fresUv = vec2(max(dot(N, R), 0), 0.0);
   float fresnel = texture(texFresnel, fresUv).r;
 
   vec4 sunColor = vec4(1.0, 1.0, 1.0, 1.0);
@@ -59,13 +68,11 @@ void main() {
 
   fragColor = mix(sky, refl, 0.5);
   fragColor = mix(refr, fragColor, fresnel);
-  // float temp = min(exp(0.01 * dist) - 1.0, 0.999);
-  // fragColor = mix(refr, fragColor, temp) * fresnel;
   fragColor += sun;
 
-  // farther the ocean, flatter the appearance
-  // float dist2 = max(length(eyePoint - worldPos), 0.01);
-  // dist2 = exp(-0.1 * dist2);
-  //
-  // fragColor = vec4(fresnel);
+  // compensation for far place
+  // can slightly reduce periodic artifacts at far place
+  float cFrac = min(exp(0.02 * dist) - 1.0, 0.8);
+  vec4 compen = mix(sky, refl, 0.5);
+  fragColor = mix(fragColor, compen, cFrac);
 }

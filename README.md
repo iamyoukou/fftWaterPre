@@ -33,4 +33,12 @@ The result is same as [FFT water](https://github.com/iamyoukou/fftWater).
 However, it can be performed in realtime without parallelization.
 The price here is about `4.1GB` memory.
 
+The periodic artifacts at the far place is reduced by blending an FFT-based method with a Perlin-noise-based method.
+
 ![result2](./output2.gif)
+
+## Sample 3
+
+Changing the way of computing the fresnel coefficient results in different effects.
+
+![result3](./output3.gif)

@@ -133,6 +133,7 @@ void Water::initTexture() {
   setTexture(tboDispZ, 14, "./image/zDisp.png", FIF_PNG);
   setTexture(tboFresnel, 15, "./image/fresnel.png", FIF_PNG);
   setTexture(tboPerlin, 16, "./image/perlin.png", FIF_PNG);
+  setTexture(tboPerlinN, 17, "./image/perlinNormal.png", FIF_PNG);
 }
 
 void Water::initUniform() {
@@ -157,6 +158,7 @@ void Water::initUniform() {
   uniTexSkybox = myGetUniformLocation(shader, "texSkybox");
   uniTexFresnel = myGetUniformLocation(shader, "texFresnel");
   uniTexPerlin = myGetUniformLocation(shader, "texPerlin");
+  uniTexPerlinN = myGetUniformLocation(shader, "texPerlinN");
 
   glUniform1i(uniTexHeight, 11);
   glUniform1i(uniTexNormal, 12);
@@ -164,6 +166,7 @@ void Water::initUniform() {
   glUniform1i(uniTexDispZ, 14);
   glUniform1i(uniTexFresnel, 15);
   glUniform1i(uniTexPerlin, 16);
+  glUniform1i(uniTexPerlinN, 17);
   glUniform1i(uniTexReflect, 3);
   glUniform1i(uniTexRefract, 2);
 
