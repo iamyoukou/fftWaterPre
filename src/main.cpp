@@ -5,6 +5,7 @@
 GLFWwindow *window;
 Skybox *skybox;
 Water *water;
+Mesh *mesh;
 
 bool saveTrigger = false;
 int saveFrameNumber = 0, simFrameNumber = 0;
@@ -30,7 +31,7 @@ float horizontalAngleReflect;
 vec3 eyePointReflect;
 mat4 reflectV;
 
-vec3 lightPosition = vec3(5.f, 10.f, 5.f);
+vec3 lightPos = vec3(5.f, 10.f, 5.f);
 vec3 lightColor = vec3(1.f, 1.f, 1.f);
 float lightPower = 12.f;
 
@@ -49,6 +50,7 @@ int main(int argc, char **argv) {
 
   skybox = new Skybox();
   water = new Water("./mesh/gridQuad.obj");
+  mesh = new Mesh("./mesh/monkey.obj", true);
 
   initTexture();
   initMatrix();
@@ -67,6 +69,10 @@ int main(int argc, char **argv) {
     // view control
     computeMatricesFromInputs();
 
+    mat4 meshM = translate(mat4(1.f), vec3(-29.f, -0.75f, 0.f));
+    meshM = rotate(meshM, -3.14f / 4.f, vec3(1.f, 0.f, 0.f));
+    meshM = scale(meshM, vec3(2.f, 2.f, 2.f));
+
     /* render to refraction texture */
     // for user-defined framebuffer,
     // must clear the depth buffer before rendering to enable depth test
@@ -77,10 +83,14 @@ int main(int argc, char **argv) {
     glEnable(GL_CLIP_DISTANCE0);
     glDisable(GL_CLIP_DISTANCE1);
 
-    vec4 clipPlane0 = vec4(0, -1, 0, Water::WATER_Y);
-
     // draw scene
     skybox->draw(model, view, projection, eyePoint);
+
+    vec4 clipPlane0 = vec4(0, -1, 0, Water::WATER_Y);
+    glUseProgram(mesh->shader);
+    glUniform4fv(mesh->uniClipPlane0, 1, value_ptr(clipPlane0));
+
+    mesh->draw(meshM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
 
     /* render to reflection texture */
     // for user-defined framebuffer,
@@ -96,10 +106,16 @@ int main(int argc, char **argv) {
     // the eye point and direction are symmetric to xz-plane
     // so we must change the view matrix for the scene
     // note: plane (0, 1, 0, D) means plane y = -D, not y = D
-    vec4 clipPlane1 = vec4(0.f, 1.f, 0.f, -Water::WATER_Y + 0.125f);
+    // vec4 clipPlane1 = vec4(0.f, 1.f, 0.f, -Water::WATER_Y + 0.125f);
+    // glUseProgram(mesh->shader);
+    // glUniform4fv(mesh->uniClipPlane1, 1, value_ptr(clipPlane1));
 
     // draw scene
     skybox->draw(model, reflectV, projection, eyePointReflect);
+
+    // mesh->draw(meshM, reflectV, projection, eyePoint, lightColor, lightPos,
+    // 0,
+    //            0);
 
     /* render to main screen */
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -111,6 +127,8 @@ int main(int argc, char **argv) {
     // change back to the original view matrix
     // draw scene
     skybox->draw(model, view, projection, eyePoint);
+
+    mesh->draw(meshM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
 
     vec3 tempLightPos =
         eyePoint + vec3(direction.x * 4.0, 2.0, direction.z * 4.0);

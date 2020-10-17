@@ -298,8 +298,8 @@ void Mesh::draw(mat4 M, mat4 V, mat4 P, vec3 eye, vec3 lightColor,
   glUniform3fv(uniLightColor, 1, value_ptr(lightColor));
   glUniform3fv(uniLightPosition, 1, value_ptr(lightPosition));
 
-  glUniform1i(uniTexBase, unitBaseColor); // change base color
-  glUniform1i(uniTexNormal, unitNormal);  // change normal
+  // glUniform1i(uniTexBase, unitBaseColor);
+  // glUniform1i(uniTexNormal, unitNormal);
 
   for (size_t i = 0; i < scene->mNumMeshes; i++) {
     int numVtxs = scene->mMeshes[i]->mNumVertices;
