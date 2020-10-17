@@ -7,7 +7,7 @@ in vec3 worldN;
 
 uniform sampler2D texReflect;
 uniform sampler2D texRefract;
-uniform sampler2D texNormal, texHeight, texFresnel, texPerlinN;
+uniform sampler2D texNormal, texHeight, texFresnel, texPerlinN, texPerlinDudv;
 uniform samplerCube texSkybox;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
@@ -16,6 +16,8 @@ uniform vec2 dudvMove;
 
 out vec4 fragColor;
 
+const float alpha = 0.02;
+
 void main() {
   vec2 ndc = vec2(clipSpace.x / clipSpace.w, clipSpace.y / clipSpace.w);
   ndc = ndc / 2.0 + 0.5;
@@ -23,9 +25,24 @@ void main() {
   vec2 texCoordRefract = vec2(ndc.x, ndc.y);
   vec2 texCoordReflect = vec2(ndc.x, -ndc.y);
 
+  // Distorting the reflection or refraction texture
+  // produces a better effect.
+  // This method is from the dudvWater project
+  vec2 distortion1 =
+      texture(texPerlinDudv, vec2(uv.x + dudvMove.x, uv.y)).rg * 2.0 - 1.0;
+  distortion1 *= alpha;
+
+  vec2 distortion2 =
+      texture(texPerlinDudv, vec2(-uv.x, uv.y + dudvMove.y)).rg * 2.0 - 1.0;
+  distortion2 *= alpha;
+
+  vec2 distortion = distortion1 + distortion2;
+
+  texCoordReflect += distortion;
   texCoordReflect.x = clamp(texCoordReflect.x, 0.001, 0.999);
   texCoordReflect.y = clamp(texCoordReflect.y, -0.999, -0.001);
 
+  texCoordRefract += distortion;
   texCoordRefract = clamp(texCoordRefract, 0.001, 0.999);
 
   float dist = length(lightPos - worldPos);

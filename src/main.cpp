@@ -71,6 +71,7 @@ int main(int argc, char **argv) {
 
     mat4 meshM = translate(mat4(1.f), vec3(-29.f, -0.75f, 0.f));
     meshM = rotate(meshM, -3.14f / 4.f, vec3(1.f, 0.f, 0.f));
+    meshM = rotate(meshM, -3.14f / 4.f, vec3(0.f, 1.f, 0.f));
     meshM = scale(meshM, vec3(2.f, 2.f, 2.f));
 
     /* render to refraction texture */

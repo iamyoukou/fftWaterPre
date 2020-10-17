@@ -41,4 +41,6 @@ The periodic artifacts at the far place is reduced by blending an FFT-based meth
 
 Changing the way of computing the fresnel coefficient results in different effects.
 
+The refraction effect is from [dudvWater](https://github.com/iamyoukou/dudvWater).
+
 ![result3](./output3.gif)

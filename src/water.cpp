@@ -134,6 +134,7 @@ void Water::initTexture() {
   setTexture(tboFresnel, 15, "./image/fresnel.png", FIF_PNG);
   setTexture(tboPerlin, 16, "./image/perlin.png", FIF_PNG);
   setTexture(tboPerlinN, 17, "./image/perlinNormal.png", FIF_PNG);
+  setTexture(tboPerlinDudv, 18, "./image/perlinDudv.png", FIF_PNG);
 }
 
 void Water::initUniform() {
@@ -159,6 +160,7 @@ void Water::initUniform() {
   uniTexFresnel = myGetUniformLocation(shader, "texFresnel");
   uniTexPerlin = myGetUniformLocation(shader, "texPerlin");
   uniTexPerlinN = myGetUniformLocation(shader, "texPerlinN");
+  uniTexPerlinDudv = myGetUniformLocation(shader, "texPerlinDudv");
 
   glUniform1i(uniTexHeight, 11);
   glUniform1i(uniTexNormal, 12);
@@ -167,6 +169,7 @@ void Water::initUniform() {
   glUniform1i(uniTexFresnel, 15);
   glUniform1i(uniTexPerlin, 16);
   glUniform1i(uniTexPerlinN, 17);
+  glUniform1i(uniTexPerlinDudv, 18);
   glUniform1i(uniTexReflect, 3);
   glUniform1i(uniTexRefract, 2);
 
