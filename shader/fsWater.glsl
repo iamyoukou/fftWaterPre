@@ -7,7 +7,8 @@ in vec3 worldN;
 
 uniform sampler2D texReflect;
 uniform sampler2D texRefract;
-uniform sampler2D texNormal, texHeight, texFresnel, texPerlinN, texPerlinDudv;
+uniform sampler2D texNormal, texHeight, texFresnel, texPerlinN;
+uniform sampler2D texNormalDudv, texPerlinDudv;
 uniform samplerCube texSkybox;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
@@ -27,13 +28,19 @@ void main() {
 
   // Distorting the reflection or refraction texture
   // produces a better effect.
-  // This method is from the dudvWater project
+  // This method is from the dudvWater project.
+  // Note: the difference between only using texPerlinDudv
+  // and blending texPerlinDudv with texNormalDudv is very small.
   vec2 distortion1 =
-      texture(texPerlinDudv, vec2(uv.x + dudvMove.x, uv.y)).rg * 2.0 - 1.0;
+      mix(texture(texPerlinDudv, vec2(uv.x + dudvMove.x, uv.y)).rg * 2.0 - 1.0,
+          texture(texNormalDudv, vec2(uv.x + dudvMove.x, uv.y)).rg * 2.0 - 1.0,
+          0.5);
   distortion1 *= alpha;
 
   vec2 distortion2 =
-      texture(texPerlinDudv, vec2(-uv.x, uv.y + dudvMove.y)).rg * 2.0 - 1.0;
+      mix(texture(texPerlinDudv, vec2(-uv.x, uv.y + dudvMove.y)).rg * 2.0 - 1.0,
+          texture(texNormalDudv, vec2(-uv.x, uv.y + dudvMove.y)).rg * 2.0 - 1.0,
+          0.5);
   distortion2 *= alpha;
 
   vec2 distortion = distortion1 + distortion2;

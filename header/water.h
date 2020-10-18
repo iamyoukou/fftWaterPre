@@ -18,12 +18,12 @@ public:
 
   GLuint shader;
   GLuint tboHeight, tboNormal, tboFresnel;
-  GLuint tboDispX, tboDispZ;
+  GLuint tboDispX, tboDispZ, tboNormalDudv;
   GLuint tboPerlin, tboPerlinN, tboPerlinDudv;
   GLint uniM, uniV, uniP;
   GLint uniLightColor, uniLightPos;
   GLint uniTexReflect, uniTexRefract, uniTexHeight, uniTexNormal, uniTexSkybox;
-  GLint uniTexFresnel, uniTexDispX, uniTexDispZ;
+  GLint uniTexFresnel, uniTexDispX, uniTexDispZ, uniTexNormalDudv;
   GLint uniTexPerlin, uniTexPerlinN, uniTexPerlinDudv;
   GLint uniEyePoint;
   GLint uniDudvMove;

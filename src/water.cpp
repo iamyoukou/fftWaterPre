@@ -43,6 +43,9 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
   prefix = "./normals/normal";
   setTexture(tboNormal, 12, getFileDir(prefix, frameN), FIF_PNG);
 
+  prefix = "./dudvs/dudv";
+  setTexture(tboNormalDudv, 19, getFileDir(prefix, frameN), FIF_PNG);
+
   for (size_t i = 0; i < scene->mNumMeshes; i++) {
     int numVtxs = scene->mMeshes[i]->mNumVertices;
 
@@ -135,6 +138,7 @@ void Water::initTexture() {
   setTexture(tboPerlin, 16, "./image/perlin.png", FIF_PNG);
   setTexture(tboPerlinN, 17, "./image/perlinNormal.png", FIF_PNG);
   setTexture(tboPerlinDudv, 18, "./image/perlinDudv.png", FIF_PNG);
+  setTexture(tboNormalDudv, 19, "./image/dudv.png", FIF_PNG);
 }
 
 void Water::initUniform() {
@@ -161,6 +165,7 @@ void Water::initUniform() {
   uniTexPerlin = myGetUniformLocation(shader, "texPerlin");
   uniTexPerlinN = myGetUniformLocation(shader, "texPerlinN");
   uniTexPerlinDudv = myGetUniformLocation(shader, "texPerlinDudv");
+  uniTexNormalDudv = myGetUniformLocation(shader, "texNormalDudv");
 
   glUniform1i(uniTexHeight, 11);
   glUniform1i(uniTexNormal, 12);
@@ -170,6 +175,7 @@ void Water::initUniform() {
   glUniform1i(uniTexPerlin, 16);
   glUniform1i(uniTexPerlinN, 17);
   glUniform1i(uniTexPerlinDudv, 18);
+  glUniform1i(uniTexNormalDudv, 19);
   glUniform1i(uniTexReflect, 3);
   glUniform1i(uniTexRefract, 2);
 
