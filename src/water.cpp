@@ -35,10 +35,8 @@ void Water::draw(mat4 M, mat4 V, mat4 P, vec3 eyePoint, vec3 lightColor,
 
   // update maps
   // for pre-computed fft water
-  string prefix = "./heights/";
-  setTexture(tboHeight, 11, getFileDir(prefix + "height", frameN), FIF_PNG);
-  setTexture(tboDispX, 13, getFileDir(prefix + "xDisp", frameN), FIF_PNG);
-  setTexture(tboDispZ, 14, getFileDir(prefix + "zDisp", frameN), FIF_PNG);
+  string prefix = "./disps/disp";
+  setTexture(tboDisp, 11, getFileDir(prefix, frameN), FIF_PNG);
 
   prefix = "./normals/normal";
   setTexture(tboNormal, 12, getFileDir(prefix, frameN), FIF_PNG);
@@ -130,15 +128,13 @@ void Water::initShader() {
 }
 
 void Water::initTexture() {
-  setTexture(tboHeight, 11, "./image/height.png", FIF_PNG);
+  setTexture(tboDisp, 11, "./image/disp.png", FIF_PNG);
   setTexture(tboNormal, 12, "./image/normal.png", FIF_PNG);
-  setTexture(tboDispX, 13, "./image/xDisp.png", FIF_PNG);
-  setTexture(tboDispZ, 14, "./image/zDisp.png", FIF_PNG);
-  setTexture(tboFresnel, 15, "./image/fresnel.png", FIF_PNG);
-  setTexture(tboPerlin, 16, "./image/perlin.png", FIF_PNG);
-  setTexture(tboPerlinN, 17, "./image/perlinNormal.png", FIF_PNG);
-  setTexture(tboPerlinDudv, 18, "./image/perlinDudv.png", FIF_PNG);
-  setTexture(tboNormalDudv, 19, "./image/dudv.png", FIF_PNG);
+  setTexture(tboFresnel, 13, "./image/fresnel.png", FIF_PNG);
+  setTexture(tboPerlin, 14, "./image/perlin.png", FIF_PNG);
+  setTexture(tboPerlinN, 15, "./image/perlinNormal.png", FIF_PNG);
+  setTexture(tboPerlinDudv, 16, "./image/perlinDudv.png", FIF_PNG);
+  setTexture(tboNormalDudv, 17, "./image/dudv.png", FIF_PNG);
 }
 
 void Water::initUniform() {
@@ -156,10 +152,8 @@ void Water::initUniform() {
   // texture
   uniTexReflect = myGetUniformLocation(shader, "texReflect");
   uniTexRefract = myGetUniformLocation(shader, "texRefract");
-  uniTexHeight = myGetUniformLocation(shader, "texHeight");
+  uniTexDisp = myGetUniformLocation(shader, "texDisp");
   uniTexNormal = myGetUniformLocation(shader, "texNormal");
-  uniTexDispX = myGetUniformLocation(shader, "texDispX");
-  uniTexDispZ = myGetUniformLocation(shader, "texDispZ");
   uniTexSkybox = myGetUniformLocation(shader, "texSkybox");
   uniTexFresnel = myGetUniformLocation(shader, "texFresnel");
   uniTexPerlin = myGetUniformLocation(shader, "texPerlin");
@@ -167,15 +161,13 @@ void Water::initUniform() {
   uniTexPerlinDudv = myGetUniformLocation(shader, "texPerlinDudv");
   uniTexNormalDudv = myGetUniformLocation(shader, "texNormalDudv");
 
-  glUniform1i(uniTexHeight, 11);
+  glUniform1i(uniTexDisp, 11);
   glUniform1i(uniTexNormal, 12);
-  glUniform1i(uniTexDispX, 13);
-  glUniform1i(uniTexDispZ, 14);
-  glUniform1i(uniTexFresnel, 15);
-  glUniform1i(uniTexPerlin, 16);
-  glUniform1i(uniTexPerlinN, 17);
-  glUniform1i(uniTexPerlinDudv, 18);
-  glUniform1i(uniTexNormalDudv, 19);
+  glUniform1i(uniTexFresnel, 13);
+  glUniform1i(uniTexPerlin, 14);
+  glUniform1i(uniTexPerlinN, 15);
+  glUniform1i(uniTexPerlinDudv, 16);
+  glUniform1i(uniTexNormalDudv, 17);
   glUniform1i(uniTexReflect, 3);
   glUniform1i(uniTexRefract, 2);
 
