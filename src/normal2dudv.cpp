@@ -34,8 +34,9 @@ void computeAndSave(string inDir, string outDir) {
       // Due to the fact that
       // the dudv map will be used for a tiled surface,
       // pixels on the border are processed in a tiling style
-      FreeImage_GetPixelColor(bitmap, (i - 1 < 0) ? w - 1 : i, j, &colorLeft);
-      FreeImage_GetPixelColor(bitmap, i, (j - 1 < 0) ? h - 1 : j, &colorUp);
+      FreeImage_GetPixelColor(bitmap, (i - 1 < 0) ? w - 1 : i - 1, j,
+                              &colorLeft);
+      FreeImage_GetPixelColor(bitmap, i, (j - 1 < 0) ? h - 1 : j - 1, &colorUp);
       FreeImage_GetPixelColor(bitmap, (i + 1) % w, j, &colorRight);
       FreeImage_GetPixelColor(bitmap, i, (j + 1) % h, &colorDown);
 
