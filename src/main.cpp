@@ -6,6 +6,8 @@ GLFWwindow *window;
 Skybox *skybox;
 Water *water;
 Mesh *mesh;
+Mesh *pier;
+Mesh *name;
 
 bool saveTrigger = false;
 int saveFrameNumber = 0, simFrameNumber = 0;
@@ -51,6 +53,8 @@ int main(int argc, char **argv) {
   skybox = new Skybox();
   water = new Water("./mesh/gridQuad.obj");
   mesh = new Mesh("./mesh/monkey.obj", true);
+  pier = new Mesh("./mesh/woodenPier.obj", true);
+  name = new Mesh("./mesh/name.obj", true);
 
   initTexture();
   initMatrix();
@@ -69,10 +73,19 @@ int main(int argc, char **argv) {
     // view control
     computeMatricesFromInputs();
 
-    mat4 meshM = translate(mat4(1.f), vec3(0.f, -0.25, 0.f));
-    meshM = rotate(meshM, -3.14f / 4.f, vec3(1.f, 0.f, 0.f));
-    meshM = rotate(meshM, -3.14f / 4.f, vec3(0.f, 1.f, 0.f));
+    mat4 meshM = translate(mat4(1.f), vec3(0.f, -0.25, 1.5f));
+    meshM = rotate(meshM, 3.14f / 4.f, vec3(1.f, 0.f, 0.f));
+    meshM = rotate(meshM, 3.14f * 1.25f, vec3(0.f, 1.f, 0.f));
     // meshM = scale(meshM, vec3(2.f, 2.f, 2.f));
+
+    mat4 pierM = translate(mat4(1.f), vec3(-3.f, -0.15f, 0.25f));
+    pierM = rotate(pierM, -3.14f / 2.f, vec3(0.f, 1.f, 0.f));
+    pierM = scale(pierM, vec3(0.1f, 0.1f, 0.1f));
+
+    mat4 nameM = translate(mat4(1.f), vec3(0.f, -0.1f, -2.f));
+    nameM = rotate(nameM, 3.14f / 2.f, vec3(1.f, 0.f, 0.f));
+    nameM = rotate(nameM, 3.14f / 2.f, vec3(0.f, 0.f, 1.f));
+    nameM = scale(nameM, vec3(0.5f, 0.5f, 0.5f));
 
     /* render to refraction texture */
     // for user-defined framebuffer,
@@ -88,10 +101,18 @@ int main(int argc, char **argv) {
     skybox->draw(model, view, projection, eyePoint);
 
     vec4 clipPlane0 = vec4(0, -1, 0, Water::WATER_Y);
+
     glUseProgram(mesh->shader);
     glUniform4fv(mesh->uniClipPlane0, 1, value_ptr(clipPlane0));
-
     mesh->draw(meshM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
+
+    glUseProgram(pier->shader);
+    glUniform4fv(pier->uniClipPlane0, 1, value_ptr(clipPlane0));
+    pier->draw(pierM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
+
+    glUseProgram(name->shader);
+    glUniform4fv(name->uniClipPlane0, 1, value_ptr(clipPlane0));
+    name->draw(nameM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
 
     /* render to reflection texture */
     // for user-defined framebuffer,
@@ -130,6 +151,8 @@ int main(int argc, char **argv) {
     skybox->draw(model, view, projection, eyePoint);
 
     mesh->draw(meshM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
+    pier->draw(pierM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
+    name->draw(nameM, view, projection, eyePoint, lightColor, lightPos, 0, 0);
 
     vec3 tempLightPos =
         eyePoint + vec3(direction.x * 4.0, 2.0, direction.z * 4.0);

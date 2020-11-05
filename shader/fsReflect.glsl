@@ -13,11 +13,11 @@ out vec4 fragColor;
 void main() {
   vec3 N = worldN;
   // vec3 L = normalize(lightPos - worldPos);
-  vec3 L = normalize(vec3(-1, 1, 1));
+  vec3 L = normalize(vec3(-1, 1, -1));
   vec3 V = normalize(eyePoint - worldPos);
   vec3 H = normalize(L + V);
 
-  float ka = 0.2, kd = 1.0, ks = 0.3;
+  float ka = 1.5, kd = 1.0, ks = 0.3;
   float alpha = 20;
 
   fragColor = vec4(0);
