@@ -47,19 +47,21 @@ void main() {
   float distAtten = max(length(eyePoint - worldPos), 0.01);
   distAtten = exp(-0.05 * distAtten);
 
-  vec3 scale = vec3(0.75, 0.5, 0.5);
+  vec3 scale = vec3(0.05, 0.05, 0.05);
 
   // perlin noise
   // blend this noise with height field can slightly reduce periodic artifacts
-  float perlinY = texture(texPerlin, (uv.xy + dudvMove) / 16.0).r * 2.0 - 1.0;
+  // float perlinY = texture(texPerlin, (uv.xy + dudvMove) / 16.0).r * 2.0
+  // - 1.0;
 
   vec3 disp = texture(texDisp, uv).rgb;
   disp = disp * 10.0 - 2.0;
   disp *= distAtten;
   disp *= scale;
 
-  float noiseY = perlinY * 5.0 * distAtten;
-  worldPos.y += mix(disp.y, noiseY, 0.25);
+  // float noiseY = perlinY * 0.25 * distAtten;
+  // worldPos.y += mix(disp.y, noiseY, 0.25);
+  worldPos.y += disp.y;
 
   // x-displacement
   worldPos.x += disp.x;

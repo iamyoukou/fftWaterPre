@@ -79,12 +79,14 @@ void computeAndSave(string inDir, string outDir) {
 }
 
 int main(int argc, char const *argv[]) {
-  for (size_t i = 0; i < 5000; i++) {
-    string inDir = getFileDir("./normals/normal", i);
-    string outDir = getFileDir("./dudvs/dudv", i);
+  // for (size_t i = 0; i < 5000; i++) {
+  //   string inDir = getFileDir("./normals/normal", i);
+  //   string outDir = getFileDir("./dudvs/dudv", i);
+  //
+  //   computeAndSave(inDir, outDir);
+  // }
 
-    computeAndSave(inDir, outDir);
-  }
+  computeAndSave("./image/normal.png", "./image/dudv.png");
 
   return 0;
 }

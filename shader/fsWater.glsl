@@ -56,24 +56,26 @@ void main() {
   texCoordRefract += distortion;
   texCoordRefract = clamp(texCoordRefract, 0.001, 0.999);
 
-  float dist = length(lightPos - worldPos);
-  // float sunAtten = 1.0 / (dist * dist);
+  float distLP = length(lightPos - worldPos);
+  float distEP = length(eyePoint - worldPos);
+  // float sunAtten = 1.0 / (distLP * distLP);
 
   // farther: N more close to vec3(0, 1, 0)
   // this can significantly reduce artifacts due to the normal map at far place
-  float nFrac = exp(0.075 * dist) - 1.0;
-  vec3 warpN = vec3(0, 1.0, 0) * nFrac;
+  float warpFrac = min(exp(0.1 * distEP) - 1.0, 0.999);
+  vec3 up = vec3(0, 1.0, 0);
   vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
 
-  float pFrac = min(exp(0.03 * dist) - 1.0, 1.0);
-  vec3 perlinN = texture(texPerlinN, (uv + dudvMove) / 16.0).rgb * 2.0 - 1.0;
-  perlinN *= pFrac;
+  // float pFrac = min(exp(0.03 * distLP) - 1.0, 1.0);
+  // vec3 perlinN = texture(texPerlinN, (uv + dudvMove) / 16.0).rgb * 2.0 - 1.0;
+  // perlinN *= pFrac;
 
-  N = normalize(N + warpN + perlinN);
+  // N = normalize(N + up + perlinN);
+  N = normalize(mix(N, up, warpFrac));
   // end warping normal
 
-  // vec3 L = normalize(lightPos - worldPos);
-  vec3 L = normalize(vec3(1, 1, 0));
+  vec3 L = normalize(lightPos - worldPos);
+  // vec3 L = normalize(vec3(1, 1, 0));
   vec3 V = normalize(eyePoint - worldPos);
   vec3 H = normalize(L + V);
   vec3 R = reflect(-L, N);
@@ -102,7 +104,7 @@ void main() {
 
   // compensation for far place
   // can slightly reduce periodic artifacts at far place
-  // float cFrac = min(exp(0.02 * dist) - 1.0, 0.8);
+  // float cFrac = min(exp(0.1 * distEP) - 1.0, 0.999);
   // vec4 compen = mix(sky, refl, 0.5);
   // fragColor = mix(fragColor, compen, cFrac);
 }

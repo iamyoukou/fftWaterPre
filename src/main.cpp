@@ -10,14 +10,14 @@ Mesh *mesh;
 bool saveTrigger = false;
 int saveFrameNumber = 0, simFrameNumber = 0;
 
-float verticalAngle = -1.79557;
-float horizontalAngle = 3.16513;
+float verticalAngle = -1.78869;
+float horizontalAngle = 3.10064;
 float initialFoV = 45.0f;
 float speed = 5.0f;
 float mouseSpeed = 0.005f;
 float nearPlane = 0.01f, farPlane = 2000.f;
 
-vec3 eyePoint = vec3(-36.338406, 1.624817, 1.602868);
+vec3 eyePoint = vec3(-3.726566, 0.495861, 0.791582);
 vec3 eyeDirection =
     vec3(sin(verticalAngle) * cos(horizontalAngle), cos(verticalAngle),
          sin(verticalAngle) * sin(horizontalAngle));
@@ -69,10 +69,10 @@ int main(int argc, char **argv) {
     // view control
     computeMatricesFromInputs();
 
-    mat4 meshM = translate(mat4(1.f), vec3(-29.f, -0.75f, 0.f));
+    mat4 meshM = translate(mat4(1.f), vec3(0.f, -0.25, 0.f));
     meshM = rotate(meshM, -3.14f / 4.f, vec3(1.f, 0.f, 0.f));
     meshM = rotate(meshM, -3.14f / 4.f, vec3(0.f, 1.f, 0.f));
-    meshM = scale(meshM, vec3(2.f, 2.f, 2.f));
+    // meshM = scale(meshM, vec3(2.f, 2.f, 2.f));
 
     /* render to refraction texture */
     // for user-defined framebuffer,
@@ -134,13 +134,13 @@ int main(int argc, char **argv) {
     vec3 tempLightPos =
         eyePoint + vec3(direction.x * 4.0, 2.0, direction.z * 4.0);
 
-    for (size_t i = 0; i < 1; i++) {
-      for (size_t j = 0; j < 1; j++) {
-        mat4 tempM = translate(mat4(1.0), vec3(2.0f * i, 0, -2.0f * j));
-        water->draw(tempM, view, projection, eyePoint, lightColor, tempLightPos,
-                    simFrameNumber);
-      }
-    }
+    // for (size_t i = 0; i < 1; i++) {
+    //   for (size_t j = 0; j < 1; j++) {
+    // mat4 tempM = translate(mat4(1.0), vec3(2.0f * i, 0, -2.0f * j));
+    water->draw(model, view, projection, eyePoint, lightColor, tempLightPos,
+                simFrameNumber);
+    //   }
+    // }
 
     Water::dudvMove += vec2(0.001, 0.001);
 
