@@ -62,16 +62,17 @@ void main() {
 
   // farther: N more close to vec3(0, 1, 0)
   // this can significantly reduce artifacts due to the normal map at far place
-  float warpFrac = min(exp(0.1 * distEP) - 1.0, 0.999);
+  float warpFrac = min(exp(0.08 * distEP) - 1.0, 0.999);
   vec3 up = vec3(0, 1.0, 0);
   vec3 N = texture(texNormal, mod(uv + dudvMove, 1.0)).rgb * 2.0 - 1.0;
 
   // float pFrac = min(exp(0.03 * distLP) - 1.0, 1.0);
-  // vec3 perlinN = texture(texPerlinN, (uv + dudvMove) / 16.0).rgb * 2.0 - 1.0;
-  // perlinN *= pFrac;
+  float pFrac = 0.3;
+  vec3 perlinN = texture(texPerlinN, (uv + dudvMove) / 16.0).rgb * 2.0 - 1.0;
+  perlinN *= pFrac;
 
   // N = normalize(N + up + perlinN);
-  N = normalize(mix(N, up, warpFrac));
+  N = normalize(mix(N + perlinN, up, warpFrac));
   // end warping normal
 
   vec3 L = normalize(lightPos - worldPos);
@@ -96,10 +97,10 @@ void main() {
   // vec4 refr = vec4(0.168, 0.267, 0.255, 0);
 
   vec4 sun = sunColor * sunFactor * max(pow(dot(N, H), 600.0), 0.0);
-  vec4 sky = texture(texSkybox, R);
+  vec4 sky = texture(texSkybox, -R);
 
-  fragColor = mix(sky, refl, 0.5);
-  fragColor = mix(refr, fragColor, fresnel);
+  // fragColor = mix(sky, refl, 0.5) * 0.7;
+  fragColor = mix(refr, refl * 0.7, fresnel);
   fragColor += sun;
 
   // compensation for far place
